@@ -17,7 +17,7 @@ def fault_injection(fault_type, **kwargs):
         else:
             thread_num = kwargs['thread_num']
         if 'duration' not in kwargs or kwargs['duration'] is None:
-            duration = '100'
+            duration = '15'
         else:
             duration = kwargs['duration']
         # 切分为多进程
@@ -31,6 +31,7 @@ def fault_injection(fault_type, **kwargs):
             logging.info("stress -c %s -t %s" % (thread_num, duration))
             info = [
                 {'status': 'success'},
+                {'fault_type': '%s' % fault_type},
                 {'description': 'Your arguments of injection are thread_num=%s, duration=%s.' % (thread_num, duration)}
             ]
             return info
@@ -47,12 +48,21 @@ def fault_injection(fault_type, **kwargs):
         else:
             mem_size = kwargs['mem_size']
         if 'duration' not in kwargs or kwargs['duration'] is None:
-            duration = '100'
+            duration = '15'
         else:
             duration = kwargs['duration']
 
-        os.system("stress --vm %s --vm-bytes %s --vm-keep -t %s" % (thread_num, mem_size, duration))
-        return None
+        pid = os.fork()
+        if pid == 0:
+            os.system("stress --vm %s --vm-bytes %s --vm-keep -t %s" % (thread_num, mem_size, duration))
+        else:
+            logging.info("stress --vm %s --vm-bytes %s --vm-keep -t %s" % (thread_num, mem_size, duration))
+            info = [
+                {'status': 'success'},
+                {'fault_type': '%s' % fault_type},
+                {'description': 'Your arguments of injection are thread_num=%s, mem_size=%s, duration=%s.' % (thread_num, mem_size, duration)}
+            ]
+            return info
 
     # iostat -x -k -d 1
     elif fault_type == 'disk':
@@ -63,12 +73,21 @@ def fault_injection(fault_type, **kwargs):
         else:
             io_times = kwargs['io_times']
         if 'duration' not in kwargs or kwargs['duration'] is None:
-            duration = '100'
+            duration = '15'
         else:
             duration = kwargs['duration']
 
-        os.system("stress -i %s -t %s" % (io_times, duration))
-        return None
+        pid = os.fork()
+        if pid == 0:
+            os.system("stress -i %s -t %s" % (io_times, duration))
+        else:
+            logging.info("stress -i %s -t %s" % (io_times, duration))
+            info = [
+                {'status': 'success'},
+                {'fault_type': '%s' % fault_type},
+                {'description': 'Your arguments of injection are io_times=%s, duration=%s.' % (io_times, duration)}
+            ]
+            return info
 
     elif fault_type == 'net':
         logging.info(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()))
@@ -77,8 +96,17 @@ def fault_injection(fault_type, **kwargs):
         else:
             net_port = kwargs['net_port']
 
-        os.system("iperf3 -s -p %s" % net_port)
-        return None
+        pid = os.fork()
+        if pid == 0:
+            os.system("iperf3 -s -p %s" % net_port)
+        else:
+            logging.info("iperf3 -s -p %s" % net_port)
+            info = [
+                {'status': 'success'},
+                {'fault_type': '%s' % fault_type},
+                {'description': 'Your arguments of injection are net_port=%s.' % net_port}
+            ]
+            return info
 
     # 若错误类型不在这4种之内，则返回 None
     else:

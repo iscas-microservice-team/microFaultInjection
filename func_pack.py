@@ -20,10 +20,11 @@ def fault_injection(fault_type, **kwargs):
             duration = '100'
         else:
             duration = kwargs['duration']
-        # using linux command to inject faults.
+        # 切分为多进程
         pid = os.fork()
         # 子进程负责错误注入
         if pid == 0:
+            # using linux command to inject faults.
             os.system("stress -c %s -t %s" % (thread_num, duration))
         # 父进程负责返回注入结果并继续监听 Server 端口
         else:
@@ -32,7 +33,7 @@ def fault_injection(fault_type, **kwargs):
                 {'status': 'success'},
                 {'description': 'Your arguments of injection are thread_num=%s, duration=%s.' % (thread_num, duration)}
             ]
-            return
+            return info
 
     elif fault_type == 'mem':
         logging.info(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()))

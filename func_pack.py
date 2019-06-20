@@ -21,9 +21,18 @@ def fault_injection(fault_type, **kwargs):
         else:
             duration = kwargs['duration']
         # using linux command to inject faults.
-        logging.info("stress -c %s -t %s" % (thread_num, duration))
-        os.system("stress -c %s -t %s" % (thread_num, duration))
-        return None
+        pid = os.fork()
+        # 子进程负责错误注入
+        if pid == 0:
+            os.system("stress -c %s -t %s" % (thread_num, duration))
+        # 父进程负责返回注入结果并继续监听 Server 端口
+        else:
+            logging.info("stress -c %s -t %s" % (thread_num, duration))
+            info = [
+                {'status': 'success'},
+                {'description': 'Your arguments of injection are thread_num=%s, duration=%s.' % (thread_num, duration)}
+            ]
+            return
 
     elif fault_type == 'mem':
         logging.info(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()))
@@ -33,7 +42,7 @@ def fault_injection(fault_type, **kwargs):
         else:
             thread_num = kwargs['thread_num']
         if 'mem_size' not in kwargs or kwargs['mem_size'] is None:
-            mem_size = '5M'
+            mem_size = '128M'
         else:
             mem_size = kwargs['mem_size']
         if 'duration' not in kwargs or kwargs['duration'] is None:
@@ -73,7 +82,8 @@ def fault_injection(fault_type, **kwargs):
     # 若错误类型不在这4种之内，则返回 None
     else:
         error = [
-            {'error': 'fault_type must in the range of cpu, mem, dish and net. Your fault_type is %s.' % fault_type}
+            {'status': 'error'},
+            {'description': 'fault_type must in the range of cpu, mem, dish and net. Your fault_type is %s.' % fault_type}
         ]
         return error
 

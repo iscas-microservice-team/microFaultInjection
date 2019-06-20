@@ -12,11 +12,11 @@ def fault_injection(fault_type, **kwargs):
         print("cpu error injection")
         logging.info(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()))
         # CPU Fault has 2 args: thread_num, duration
-        if 'thread_num' not in kwargs:
+        if 'thread_num' not in kwargs or kwargs['thread_num'] is None:
             thread_num = '4'
         else:
             thread_num = kwargs['thread_num']
-        if 'duration' not in kwargs:
+        if 'duration' not in kwargs or kwargs['duration'] is None:
             duration = '100'
         else:
             duration = kwargs['duration']
@@ -28,15 +28,15 @@ def fault_injection(fault_type, **kwargs):
     elif fault_type == 'mem':
         logging.info(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()))
         # Memory Fault has 3 args: thread_num, mem_size, duration
-        if 'thread_num' not in kwargs:
+        if 'thread_num' not in kwargs or kwargs['thread_num'] is None:
             thread_num = '4'
         else:
             thread_num = kwargs['thread_num']
-        if 'mem_size' not in kwargs:
+        if 'mem_size' not in kwargs or kwargs['mem_size'] is None:
             mem_size = '5M'
         else:
             mem_size = kwargs['mem_size']
-        if 'duration' not in kwargs:
+        if 'duration' not in kwargs or kwargs['duration'] is None:
             duration = '100'
         else:
             duration = kwargs['duration']
@@ -48,11 +48,11 @@ def fault_injection(fault_type, **kwargs):
     elif fault_type == 'disk':
         logging.info(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()))
         # args
-        if 'io_times' not in kwargs:
+        if 'io_times' not in kwargs or kwargs['io_times'] is None:
             io_times = '4'
         else:
             io_times = kwargs['io_times']
-        if 'duration' not in kwargs:
+        if 'duration' not in kwargs or kwargs['duration'] is None:
             duration = '100'
         else:
             duration = kwargs['duration']
@@ -62,7 +62,7 @@ def fault_injection(fault_type, **kwargs):
 
     elif fault_type == 'net':
         logging.info(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()))
-        if 'net_port' not in kwargs:
+        if 'net_port' not in kwargs or kwargs['net_port'] is None:
             net_port = '100'
         else:
             net_port = kwargs['net_port']

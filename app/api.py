@@ -14,7 +14,7 @@ def test_get():
 
 
 # Fault-Injection Method
-@app.route('/fault-inject', method=['POST'])
+@app.route('/fault-inject', methods=['POST'])
 def inject_fault():
     fault_type = request.form.get('fault_type')
     thread_num = request.form.get('thread_num')

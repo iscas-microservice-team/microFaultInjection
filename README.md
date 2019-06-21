@@ -15,7 +15,7 @@
 若想在本地直接运行本项目，请确保满足以下条件:
 
 1. 操作系统必须为 Linux Distribution (本项目在 Ubuntu 16.04 系统上通过测试)
-2. 具有 python3.7 运行环境以及相应的 flask, python-dotenv 工具库 
+2. 具有 python3.7 运行环境以及相应的 Flask, Flask-wtf,flask-bootstrap 工具库 
 3. 安装了 stress 命令工具
 4. 安装了 iperf3 命令工具
 5. 确保设备的 5000 端口未被占用
@@ -24,6 +24,7 @@
 
 该项目镜像的 DockerHub 地址:
 
+你也可以利用本项目根目录下的 Dockerfile 自行进行封装
 
 ## 使用方法
 

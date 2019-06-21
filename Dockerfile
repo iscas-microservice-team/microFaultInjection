@@ -10,9 +10,6 @@ Add . /var/app/microFaultInjection
 RUN pip install Flask
 RUN pip install Flask-wtf
 RUN pip install flask-bootstrap
-# Update Source list
-RUN rm -rf /etc/apt/sources.list
-Add /etc/apt/sources.list /etc/apt
 # Get Linux Commands
 RUN apt-get update
 RUN apt-get install -y --allow-unauthenticated stress

@@ -11,31 +11,21 @@
 通过该模块所提供的 REST API 向其中注入包括"cpu、内存、磁盘和网络"等多种错误，
 对微服务最小单元的资源利用情况进行实验和观测。
 
-## 运行条件
+## 快速开始
+项目根目录下的 single_fault_injection.yaml 可以直接将本应用
+以 Deployment 的形式部署在您的 K8s 或 Istio 上;
+并对外暴露 30050 端口
 
-本项目基于 Linux Distribution 操作系统的多种命令进行错误注入，
-若想在本地直接运行本项目，请确保满足以下条件:
-
-1. 操作系统必须为 Linux Distribution (本项目在 Ubuntu 16.04 系统上通过测试)
-2. 具有 python3.7 运行环境以及相应的 Flask, Flask-wtf,flask-bootstrap 工具库 
-3. 安装了 stress 命令工具
-4. 安装了 iperf3 命令工具
-5. 确保设备的 5000 端口未被占用
-
-或使用 dockerhub 获取我们封装好的镜像，并在容器内部映射 5000 端口至外部
+>这个 yaml 限制了容器资源最大 CPU 使用率不超过 0.4; 最大使用内存不超过 128M。
+>设置这个上限可以帮助您直观地感受到错误的注入。
 
 ```bash
-# 使用 docker 简单测试该应用( docker 版本需高于 18.03-ce )
-docker run --rm -it -d --name fault-injection-server -p 5000:5000  xinyaotian/micro-fault-injection:1.0.0
+# 直接通过 yaml 部署于 K8s 或 Istio (K8s 版本 1.13.1 / Istio 1.0.6 通过测试)
+kubectl apply -f https://raw.githubusercontent.com/iscas-microservice-team/microFaultInjection/master/single_fault_inject.yaml
 ```
 
-同样，你也可以利用本项目根目录下的 Dockerfile 自行进行封装
-
-封装命令如下:
-```bash
-# 首先需进入该项目的目录 microFaultInjection/ 中, 再运行下面的命令
-docker build -t your-docker-name/project-name:1.0 .
-```
+现在，访问您 K8s 或 Istio 集群的 30050 端口，看到用户使用指导页面，就证明部署成功了。
+接下来，您就可以通过提供的 API 进行各式错误注入了。
 
 ## 使用方法
 >备注: 本"使用方法"亦可在启动服务后，通过服务的 / 或 /usage 这两种 url 进行查看
@@ -43,7 +33,7 @@ docker build -t your-docker-name/project-name:1.0 .
 本项目基于 REST API 理念进行设计，故进行错误注入时需使用 POST 方式，
 向指定 url 发送注入信息。
 
-错误注入的 POST 请求发送示例如下( 注意改变 IP 与端口号 ):
+错误注入的 POST 请求发送示例如下( **注意改变 IP 与端口号** ):
 
 1. 注入 CPU 故障
 
@@ -81,15 +71,33 @@ curl -X POST -d 'fault_type=disk&io_times=4&duration=15' http://localhost:5000/f
 curl -X POST -d 'fault_type=net&net_port=100' http://localhost:5000/fault-inject
 ```
 
-## Yaml编写示例( 以 Sidecar 形式将本项目部署于微服务中 )
-> 项目根目录下的 single_fault_injection.yaml 可以直接将本应用
-> 以 Deployment 的形式部署在 K8s 或 Istio 上;
-> 并对外暴露 30050 端口
+## 运行条件
+
+本项目基于 Linux Distribution 操作系统的多种命令进行错误注入，
+若想在本地直接运行本项目，请确保满足以下条件:
+
+1. 操作系统必须为 Linux Distribution (本项目在 Ubuntu 16.04 系统上通过测试)
+2. 具有 python3.7 运行环境以及相应的 Flask, Flask-wtf,flask-bootstrap 工具库 
+3. 安装了 stress 命令工具
+4. 安装了 iperf3 命令工具
+5. 确保设备的 5000 端口未被占用
+
+或使用 dockerhub 获取我们封装好的镜像，并在容器内部映射 5000 端口至外部
 
 ```bash
-# 直接通过 yaml 部署于 K8s 或 Istio (K8s 版本 1.13.1 / Istio 1.0.6 通过测试)
-kubectl apply -f ./fault-server.yaml
+# 使用 docker 简单测试该应用( docker 版本需高于 18.03-ce )
+docker run --rm -it -d --name fault-injection-server -p 5000:5000  xinyaotian/micro-fault-injection:1.0.0
 ```
+
+同样，你也可以利用本项目根目录下的 Dockerfile 自行进行封装
+
+封装命令如下:
+```bash
+# 首先需进入该项目的目录 microFaultInjection/ 中, 再运行下面的命令
+docker build -t your-docker-name/project-name:1.0 .
+```
+
+## Yaml编写示例( 以 Sidecar 形式将本项目部署于微服务中 )
 
 本项目的镜像将作为原本微服务应用的 Sidecar 独立部署运行，
 因此在 K8s 环境中其应该与业务应用部署于同一个 Pod 之中。

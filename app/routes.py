@@ -1,11 +1,11 @@
 from app import app
+from flask import render_template
 
 
-# ToDo: 在欢迎页面加入简易使用说明。
 @app.route('/')
-@app.route('/index')
-def index():
-    return "Hello, World!"
+@app.route('/usage')
+def usage():
 
-# ToDo: 制作简易的用户交互界面
+    return render_template('frontPage.html', title='API Usage Guide')
+
 

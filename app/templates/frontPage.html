@@ -1,15 +1,51 @@
 {% extends "base.html" %}
 
-<!-- import form receiving model -->
-{% import 'bootstrap/wtf.html' as wtf %}
-
     {% block app_content %}
-        <!-- ########## -->
 
-        <h1>Fault Injection</h1>
+<h1>使用方法</h1>
 
-        <h1>How can I inject faults?</h1>
+<p>本项目基于 REST API 理念进行设计，故进行错误注入时需使用 POST 方式，
+    向指定 url 发送注入信息。</p>
+<p>项目地址: https://github.com/iscas-microservice-team/microFaultInjection </p>
+<br>
 
 
+<h4>1. 注入 CPU 故障</h4>
+
+<pre>
+    <span># fault_type=cpu 指定错误故障类型(此处为 cpu 类型)</span>
+    <span># thread_num=4 触发该错误的线程数(此处为 4 个线程)</span>
+    <span># duration=15 故障持续时间,单位为秒(此处为 15 秒)</span>
+    <span>curl -X POST -d 'fault_type=cpu&thread_num=4&duration=15' http://localhost:5000/fault-inject</span>
+</pre>
+
+
+
+<h4>2. 注入内存故障</h4>
+
+<pre>
+    <span># fault_type=mem 指定错误故障类型(此处为 mem 类型)</span>
+    <span># mem_size=120M 指定内存泄露的数值(此处为 120M ,注意 M 不能省略)</span>
+    <span># thread_num=4 触发该错误的线程数(此处为 4 个线程)</span>
+    <span># duration=15 故障持续时间,单位为秒(此处为 15 秒)</span>
+    <span>curl -X POST -d 'fault_type=mem&mem_size=120M&thread_num=4&duration=15' http://localhost:5000/fault-inject</span>
+</pre>
+
+<h4>3. 注入磁盘故障</h4>
+
+<pre>
+    <span># fault_type=disk 指定错误故障类型(此处为 disk 类型)</span>
+    <span># io_times=4</span>
+    <span># duration=15 故障持续时间,单位为秒(此处为 15 秒)</span>
+    <span>curl -X POST -d 'fault_type=disk&io_times=4&duration=15' http://localhost:5000/fault-inject</span>
+</pre>
+
+<h4>4. 注入网络故障</h4>
+
+<pre>
+    <span># fault_type=net 指定错误故障类型(此处为 net 类型)</span>
+    <span># net_port=100</span>
+    <span>curl -X POST -d 'fault_type=net&net_port=100' http://localhost:5000/fault-inject</span>
+</pre>
 
     {% endblock %}

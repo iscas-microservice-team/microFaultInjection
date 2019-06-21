@@ -1,0 +1,47 @@
+---
+# 为 fault injection 创建 service 分配端口 #
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: single-fault-injection
+  namespace: default
+spec:
+  selector:
+    # deployment identifier
+    # 这个标签要与 deployment 中相对应
+    app: fault-injection
+  ports:
+    - protocol: TCP
+      port: 5000  # 容器内端口为 5000
+      nodePort: 30050  # 映射至主机的 30050 端口
+  type: NodePort  # 映射方式为 NodePort
+---
+# 将该模块作为一个独立的 Pod 在 K8s 上进行部署 #
+---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: single-fault-injection
+  namespace: default
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        # svc identifier
+        # 这个标签要与 service 中相对应
+        app: fault-injection
+    spec:
+      containers:
+      # 错误注入模块的 container
+      - name: fault-injection-container
+        image: xinyaotian/micro-fault-injection:1.0.0
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 5000
+        # 该容器的资源限制, 错误注入可使其达到峰值 #
+        resources:
+          limits:
+            cpu: "0.4"
+            memory: 128Mi

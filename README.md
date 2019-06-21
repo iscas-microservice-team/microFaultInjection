@@ -82,6 +82,14 @@ curl -X POST -d 'fault_type=net&net_port=100' http://localhost:5000/fault-inject
 ```
 
 ## Yaml编写示例( 以 Sidecar 形式将本项目部署于微服务中 )
+> 项目根目录下的 single_fault_injection.yaml 可以直接将本应用
+> 以 Deployment 的形式部署在 K8s 或 Istio 上;
+> 并对外暴露 30050 端口
+
+```bash
+# 直接通过 yaml 部署于 K8s 或 Istio (K8s 版本 1.13.1 / Istio 1.0.6 通过测试)
+kubectl apply -f ./fault-server.yaml
+```
 
 本项目的镜像将作为原本微服务应用的 Sidecar 独立部署运行，
 因此在 K8s 环境中其应该与业务应用部署于同一个 Pod 之中。

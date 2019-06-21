@@ -1,5 +1,7 @@
 # 微服务"错误注入Sidecar"使用说明文档
-作者: 中科院软件所微服务研究项目小组
+> 作者: 中科院软件所微服务研究项目小组
+
+> 该项目作者: github.com/XinyaoTian || leontian1024@gmail.com
 
 ## 项目概述
 
@@ -36,6 +38,7 @@ docker build -t your-docker-name/project-name:1.0 .
 ```
 
 ## 使用方法
+>备注: 本"使用方法"亦可在启动服务后，通过服务的 / 或 /usage 这两种 url 进行查看
 
 本项目基于 REST API 理念进行设计，故进行错误注入时需使用 POST 方式，
 向指定 url 发送注入信息。
